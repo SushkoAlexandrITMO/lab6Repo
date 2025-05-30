@@ -5,6 +5,7 @@ import Server.Stack.StackMennager;
 import Server.transfer.*;
 
 import java.time.format.DateTimeParseException;
+import java.util.stream.Stream;
 
 /**
  * CommandCountByAddress - класс, реализующий выполнение команды count_by_official_address
@@ -46,7 +47,7 @@ public class CommandCountByAddress implements Command{
     public Response execute(String data) {
         if (data != null && !this.isStarted) {return new Response("После команды count_by_official_address в той же строке никаких аргументов быть не должно", null);}
 
-        int count = 0;
+        long count = 0;
         String resp = "";
         this.isStarted = true;
 
@@ -57,23 +58,23 @@ public class CommandCountByAddress implements Command{
             }
 
             if (!this.isStreetAdded) {
-                if (data != null) {
+                if (!data.equals("null")) {
                     if (resp != "") {
                         resp = "";
                     }
                     this.addres.setStreet(data);
                     this.isStreetAdded = true;
-                    data = null;
+                    data = "null";
                 } else {
                     return new Response(resp + "Введите улицу, на которой находится компания (просто название одним словом):", "input");
                 }
             }
 
             if (!this.isZipCodeAdded) {
-                if (data != null) {
+                if (!data.equals("null")) {
                     this.addres.setZipCode(data);
                     this.isZipCodeAdded = true;
-                    data = null;
+                    data = "null";
                 } else {
                     return new Response("Введите зип-код адреса компании:", null);
                 }
@@ -85,30 +86,30 @@ public class CommandCountByAddress implements Command{
             }
 
             if (!this.isLocationXAdded) {
-                if (data != null) {
+                if (!data.equals("null")) {
                     if (resp != "") {
                         resp = "";
                     }
                     this.loc.setX(Integer.valueOf(data));
                     this.isLocationXAdded = true;
-                    data = null;
+                    data = "null";
                 } else {
                     return new Response(resp + "Введите координату x локации, на которой находится компания (просто название одним словом):", null);
                 }
             }
 
             if (!this.isLocationYAdded) {
-                if (data != null) {
+                if (!data.equals("null")) {
                     this.loc.setY(Float.parseFloat(data));
                     this.isLocationYAdded = true;
-                    data = null;
+                    data = "null";
                 } else {
                     return new Response(resp + "Введите координату y локации, на которой находится компания (просто название одним словом):", null);
                 }
             }
 
             if (!this.isLocationNameAdded) {
-                if (data != null) {
+                if (!data.equals("null")) {
                     this.loc.setName(data);
                     this.isLocationNameAdded = true;
                 } else {
@@ -118,9 +119,9 @@ public class CommandCountByAddress implements Command{
 
             this.addres.setTown(this.loc);
 
-            for (Organization org: this.stackMennager.getStack()){
-                if (org.getOfficialAddress().toString().equals(this.addres.toString())) {count += 1;};
-            }
+            Stream<Boolean> countStream = this.stackMennager.getStack().stream()
+                    .map(a -> a.getOfficialAddress().toString().equals(this.addres.toString()));
+            count = countStream.filter(b -> b).count();
 
             cleanAll();
 

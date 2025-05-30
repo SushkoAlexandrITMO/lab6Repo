@@ -4,7 +4,11 @@ import Server.Model.*;
 import Server.Stack.StackMennager;
 import Server.transfer.*;
 
+import java.awt.*;
+import java.util.List;
 import java.util.Stack;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * CommandFilterFullName - класс, реализующий выполнение команды filter_starts_with_full_name
@@ -22,14 +26,13 @@ public class CommandFilterFullName implements Command{
 
     @Override
     public Response execute(String arg) {
-        if (arg == null) {return new Response("", null);}
-        String resp = "";
+        if (!arg.startsWith("null")) {return new Response("Введите подстроку для поиска!", null);}
+        StringBuilder resp = new StringBuilder();
 
-        Stack<Organization> stack = this.stackMennager.getStack();
-        for (Organization org: stack) {
-            if (org.getFullName().contains(arg)) {
-                resp += org.toString() + "\n";
-            }
+        List<Organization> stackStream = this.stackMennager.getStack()
+                .stream().filter(b -> b.getFullName().contains(arg)).toList();
+        for (Organization org: stackStream) {
+            resp.append(org.toString()).append("\n");
         }
 
         if (resp.isEmpty()) {return new Response("Нет компаний, чьё полное название содержало в виде подстроки введённую строку", null);}

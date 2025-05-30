@@ -4,6 +4,9 @@ import Server.Model.*;
 import Server.Stack.StackMennager;
 import Server.transfer.*;
 
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+
 /**
  * CommandAverage - класс, предназначенный для реализации команды average
  */
@@ -22,15 +25,11 @@ public class CommandAverage implements Command{
     public Response execute(String arg) {
         if (arg != null) {return new Response("После команды average_of_annual_turnover не должно быть аргументов", "error");}
 
-        double count = 0;
-        double summ = 0;
+        Stream<Organization> streamed = this.stackMennager.getStack().stream();
+        Stream<Float> annual = streamed.map(a -> a.getAnnualTurnover());
+        double sum = annual.reduce((float) 0, (a, b) -> a+b);
 
-        for (Organization org: this.stackMennager.getStack()) {
-            summ += org.getAnnualTurnover();
-            count += 1;
-        }
-
-        return new Response("Средний годовой оборот компаний: " + String.valueOf((summ/count)), null);
+        return new Response("Средний годовой оборот компаний: " + String.valueOf((sum/streamed.count())), null);
     }
 
     @Override

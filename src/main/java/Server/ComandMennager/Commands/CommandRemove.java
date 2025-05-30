@@ -23,7 +23,7 @@ public class CommandRemove implements Command{
 
     @Override
     public Response execute(String arg) {
-        if (arg == null) {return new Response("После команды remove_by_id должен быть указан ID компании", "error");}
+        if (!arg.startsWith("null")) {return new Response("После команды remove_by_id должен быть указан ID компании", "error");}
         Long id = Long.parseLong(arg);
         if (this.stackMennager.isIDIn((new StackRequest(null, id))).message().equals("0")) {return new Response("Компании с таким ID не существует", "error");}
 

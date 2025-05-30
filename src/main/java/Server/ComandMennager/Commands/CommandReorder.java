@@ -20,7 +20,7 @@ public class CommandReorder implements Command{
 
     @Override
     public Response execute(String arg) {
-        if (arg != null) {return new Response("После команды reorder не должно быть аргументов", "error");}
+        if (!arg.startsWith("null")) {return new Response("После команды reorder не должно быть аргументов", "error");}
         Stack<Organization> stack = this.stackMennager.getStack();
 
         ArrayList<Organization> list = new ArrayList<>(stack);

@@ -13,7 +13,7 @@ import java.util.Stack;
  */
 @XmlRootElement(name = "show")
 public class CommandShow implements Command{
-    private StackMennager stackMennager;
+    private final StackMennager stackMennager;
 
     /**
      * CommandShow(StackMennager stackMennager) - конструктор класса

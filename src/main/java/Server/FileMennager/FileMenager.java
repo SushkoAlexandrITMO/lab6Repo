@@ -1,7 +1,9 @@
 package Server.FileMennager;
 
+import Server.DeveloperKit.SimpleIOMenager;
 import Server.Model.Organization;
 import Server.transfer.FileRequest;
+import Server.transfer.IORequest;
 import Server.transfer.Response;
 
 import javax.xml.bind.*;
@@ -18,11 +20,13 @@ import java.util.Stack;
  */
 public class FileMenager {
     String saveFileName;
+    private boolean isLogsON;
+    private SimpleIOMenager ioMenager;
 
     /**
      * FileMenager(String saveFileName) - конструктор класса FileMenager
      */
-    public FileMenager() {
+    public FileMenager(boolean isLogON, SimpleIOMenager simpleIOMenager) {
         this.saveFileName = System.getenv("save");
         setDirectory();
     }
@@ -33,6 +37,7 @@ public class FileMenager {
      * @return res - список строк
      */
     public List<String[]> checkScript(String fileName) {
+
         List<String[]> res = new ArrayList<>();
 
         try (FileReader fileReader = new FileReader(fileName);
@@ -104,8 +109,9 @@ public class FileMenager {
                             );
 
                             if (!org.isAllSet()) {
-                                System.err.println("Ошибка валидации XML\nОтсутствуют некоторые элементы организации");
-                                System.exit(1);
+                                this.ioMenager.sendLog(new IORequest("Ошибка валидации XML\nОтсутствуют некоторые элементы организации",
+                                        2));
+                                System.exit(2);
                             }
 
                             res.add(org);
@@ -117,34 +123,31 @@ public class FileMenager {
                             isFinish = true;
 
                         } catch (RuntimeException e) {
-                            System.err.println("Ошибка валидации XML");
-                            System.exit(1);
+                            this.ioMenager.sendLog(new IORequest("Ошибка валидации XML", 2));
+                            System.exit(2);
                         } catch (JAXBException e) {
-                            System.err.println("Ошибка парсинга XML");
-                            System.exit(1);
+                            this.ioMenager.sendLog(new IORequest("Ошибка парсинга XML", 2));
+                            System.exit(2);
                         }
                     }
                 }
             }
 
-            if (!isStart) {
-                System.err.println("Файл пуст!");
-                System.exit(1);
-            }
             if (!isFinish) {
-                System.err.println("Файл содержит не полную информацию!");
-                System.exit(1);
+                this.ioMenager.sendLog(new IORequest("Файл содержит не полную информацию!", 2));
+                System.exit(2);
             }
 
         } catch (IOException e) {
-            System.err.println("Ошибка чтения файла: " + e.getMessage());
-            System.exit(1);
+            this.ioMenager.sendLog(new IORequest("Ошибка чтения файла: " + e.getMessage(), 2));
+            System.exit(2);
         } catch (JAXBException e) {
-            System.err.println("Ошибка парсинга файла: " + e.getMessage());
-            System.exit(1);
+            this.ioMenager.sendLog(new IORequest("Ошибка парсинга файла: " + e.getMessage(), 2));
+            System.exit(2);
+        } catch (Exception e) {
+            this.ioMenager.sendLog(new IORequest("Ошибка: " + e.getMessage(), 2));
+            System.exit(2);
         }
-
-
 
         for (long freeID = 0L; freeID < maxID; freeID++) {
             if (!notFreeID.contains(freeID)) {
@@ -183,9 +186,9 @@ public class FileMenager {
             writer.println("</organizations>");
 
         } catch (IOException e) {
-            return new Response("Ошибка сохранения", null);
+            this.ioMenager.sendLog(new IORequest("Ошибка сохранения", 1));
         } catch (JAXBException e) {
-            return new Response("Ошибка записи", null);
+            this.ioMenager.sendLog(new IORequest("Ошибка записи", 1));
         }
         return new Response("Данные сохранены", null);
     }
@@ -208,7 +211,7 @@ public class FileMenager {
                 Files.createFile(Path.of("Data/save.xml"));
             } catch (FileAlreadyExistsException ignore) {}
         } catch (IOException e) {
-            System.out.println("Ошибка: " + e.getMessage());
+            this.ioMenager.sendLog(new IORequest("Ошибка: " + e.getMessage(), 1));
         }
     }
 

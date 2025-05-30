@@ -168,6 +168,6 @@ public class Organization extends Model implements Comparable<Organization>{
 
     @Override
     public int compareTo(Organization o) {
-        return (int)(o.annualTurnover - this.annualTurnover);
+        return o.name.compareTo(this.name);
     }
 }

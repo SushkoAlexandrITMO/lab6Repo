@@ -12,6 +12,7 @@ public class InputOutMennager {
     private boolean isCommandInput;
     private String commandName;
     Response resp;
+    private boolean isConnectReady;
 
     /**
      * InputOutMennager(CommandMennager commandMennager) - конструктор класса
@@ -20,6 +21,7 @@ public class InputOutMennager {
     public InputOutMennager(ClientConnectMenager connectMenager) {
         this.connectMenager = connectMenager;
         this.isCommandInput = false;
+        this.isConnectReady = false;
     }
 
     /**
@@ -28,13 +30,23 @@ public class InputOutMennager {
     public void Start() {
         isCommandInput = false;
 
+
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("Приложение начало работу");
 
+        if (!this.connectMenager.initConnect()) {
+            System.out.println("Невозможно установить соединение с сервером\n" +
+                    "Попробуйте перезапустить программу и убедитесь в надёжности Вашего интернет соединения");
+            System.exit(2);
+        };
+
         while (scanner.hasNextLine()) {
 
             String[] inp = scanner.nextLine().split(" ");
+
+            if (inp.length == 0) {continue;}
+
             if (inp.length > 2) {
                 System.out.println("Слишком большое количество аргументов!");
                 continue;
@@ -48,16 +60,29 @@ public class InputOutMennager {
             else {
                 this.resp = connectMenager.sendGetToFromServer(new Request(inp[0], inp[1]));
             }
-
-            System.out.println(resp.message());
+            if (resp != null) {
+                if (resp.message().isEmpty()) {
+                    System.out.println("В ответе пустовато...\nВозможно сервак прилёг или ему плохо\nИли программист дебич");
+                } else {
+                    resp.message().replace("\n\n", "\n");
+                    System.out.println(resp.message());
+                }
+            }
 
             if (resp.args() != null) {
-                if (resp.args().equals("input")) {
-                    this.isCommandInput = true;
-                    this.commandName = inp[0];
-                } else if (resp.args().equals("finish")) {
-                    this.isCommandInput = false;
-                    this.commandName = null;
+                switch (resp.args()) {
+                    case "input" -> {
+                        this.isCommandInput = true;
+                        this.commandName = inp[0];
+                    }
+                    case "finish" -> {
+                        this.isCommandInput = false;
+                        this.commandName = null;
+                    }
+                    case "exit" -> {
+                        System.out.println("Приложение завершило работу");
+                        System.exit(0);
+                    }
                 }
             }
 

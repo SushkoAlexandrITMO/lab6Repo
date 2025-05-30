@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<organizations>
 <organization>
     <id>1</id>
     <name>savename</name>
@@ -7,7 +8,7 @@
         <y>20</y>
     </coordinates>
     <creationDate>2000-01-01</creationDate>
-    <annualTurnover>12121212</annualTurnover>
+    <annualTurnover>1.2121212E7</annualTurnover>
     <fullName>1</fullName>
     <type>Commercial</type>
     <officialAddress>
@@ -15,8 +16,9 @@
         <zipCode>zipCodic</zipCode>
         <town>
             <x>34</x>
-            <y>56</y>
+            <y>56.0</y>
             <name>townname</name>
         </town>
     </officialAddress>
 </organization>
+</organizations>

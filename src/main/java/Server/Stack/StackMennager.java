@@ -1,6 +1,7 @@
 package Server.Stack;
 
 import Server.ComandMennager.Commands.Command;
+import Server.DeveloperKit.SimpleIOMenager;
 import Server.transfer.*;
 import Server.FileMennager.FileMenager;
 import Server.Model.Organization;
@@ -19,19 +20,25 @@ public class StackMennager {
     private final Stack<Organization> stack;
     private int count;
     private final LocalDate initDate;
+    private boolean isLogsON;
+    private SimpleIOMenager ioMenager;
 
     /**
      * StackMennager - конструктор класса
      */
-    public StackMennager(FileMenager fileMennager) {
+    public StackMennager(FileMenager fileMennager, boolean isLogsON, SimpleIOMenager simpleIOMenager) {
         HashMap<String, Command> commands = new HashMap<>();
         initDate = LocalDate.now();
         stack = new Stack<>();
         this.fileMennager = fileMennager;
+        this.ioMenager = simpleIOMenager;
+        this.isLogsON = isLogsON;
+
         ArrayList<Organization> result = fileMennager.addOrgsFromEnv(System.getenv("save"));
         if (result == null) {
-            System.err.println("При чтении файла из переменной окружения произошла ошибка.\nПрограмма останавливает работу");
-            System.exit(1);
+            this.ioMenager.sendLog(new IORequest("При чтении файла из переменной окружения произошла ошибка.\n" +
+                    "Программа останавливает работу", 2));
+            System.exit(2);
         } else {
             setAll(result);
         }
@@ -60,10 +67,10 @@ public class StackMennager {
      * @return - ответ о результате операции
      */
     public Response isIDIn(StackRequest req) {
-        for (Organization org: this.stack) {
-            if (org.getID() == req.id()) {return new Response("1", null);}
-        }
-        return new Response("0", null);
+        long res = this.stack.stream()
+                .filter(b -> b.getID() == req.id()).count();
+
+        return new Response(Long.toString(res), null);
     }
 
     /**

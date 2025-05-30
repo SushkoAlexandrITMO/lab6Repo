@@ -1,3 +1,3 @@
 package Server.transfer;
 
-public record IORequest(String message, String code) {}
+public record IORequest(String message, int code) {}

@@ -74,7 +74,7 @@ public class CommandUpdate implements Command{
             if (!check(Long.parseLong(data))) {return new Response("Организация с данным ID отсутствует", null);}
             this.id = Long.valueOf(data);
             this.org.setId(this.id);
-            data = null;
+            data = "null";
             isCheck = true;
         }
 
@@ -82,10 +82,10 @@ public class CommandUpdate implements Command{
 
         try {
             if (!this.isNameAdded) {
-                if (data != null) {
+                if (!data.startsWith("null")) {
                     this.org.setName(data);
                     this.isNameAdded = true;
-                    data = null;
+                    data = "null";
                 } else {
                     return new Response("Введите название компании:", "input");
                 }
@@ -97,62 +97,62 @@ public class CommandUpdate implements Command{
             }
 
             if (!this.isXAdded) {
-                if (data != null) {
-                    if (resp != "") {
+                if (!data.startsWith("null")) {
+                    if (!resp.isEmpty()) {
                         resp = "";
                     }
                     this.coords.setX(Integer.parseInt(data));
                     this.isXAdded = true;
 
-                    data = null;
+                    data = "null";
                 } else {
                     return new Response(resp + "Введите координату x координат компании (целое число):", null);
                 }
             }
 
             if (!this.isYAdded) {
-                if (data != null) {
+                if (!data.startsWith("null")) {
                     this.coords.setY(Long.parseLong(data));
                     this.isYAdded = true;
-                    data = null;
+                    data = "null";
                 } else {
                     return new Response("Введите координату y координат компании компании (дробное число):", null);
                 }
             }
 
             if (!this.isCreationDateAdded) {
-                if (data != null) {
+                if (!data.startsWith("null")) {
                     this.org.setCreationDate(LocalDate.parse(data));
                     this.isCreationDateAdded = true;
 
-                    data = null;
+                    data = "null";
                 } else {
                     return new Response("Введите дату основания компании в формате гггг-мм-дд компании:", null);
                 }
             }
 
             if (!this.isAnnualTurnoverAdded) {
-                if (data != null) {
+                if (!data.startsWith("null")) {
                     this.org.setAnnulTurnover(Float.valueOf(data));
                     this.isAnnualTurnoverAdded = true;
-                    data = null;
+                    data = "null";
                 } else {
                     return new Response("Введите годовой оборот компании (целое число):", null);
                 }
             }
 
             if (!this.isFullNameAdded) {
-                if (data != null) {
+                if (!data.startsWith("null")) {
                     this.org.setFullName(data);
                     this.isFullNameAdded = true;
-                    data = null;
+                    data = "null";
                 } else {
                     return new Response("Введите полное название компании:", null);
                 }
             }
 
             if (!this.isOrganizationTypeAdded) {
-                if (data != null) {
+                if (!data.startsWith("null")) {
                     String dt = data;
                     if (dt.equals("1")) {
                         this.isOrganizationTypeAdded = true;
@@ -169,7 +169,7 @@ public class CommandUpdate implements Command{
                     } else {
                         return new Response("Введите число от 1 до 4 без дополнительных символов", null);
                     }
-                    data = null;
+                    data = "null";
                 } else {
                     return new Response("Введите номер типа компании:\n1. COMMERCIAL\n2. GOVERNMENT\n3. TRUST\n4. PRIVATE_LIMITED_COMPANY", null);
                 }
@@ -181,23 +181,23 @@ public class CommandUpdate implements Command{
             }
 
             if (!this.isStreetAdded) {
-                if (data != null) {
+                if (!data.startsWith("null")) {
                     if (resp != "") {
                         resp = "";
                     }
                     this.addres.setStreet(data);
                     this.isStreetAdded = true;
-                    data = null;
+                    data = "null";
                 } else {
                     return new Response(resp + "Введите улицу, на которой находится компания (просто название одним словом):", null);
                 }
             }
 
             if (!this.isZipCodeAdded) {
-                if (data != null) {
+                if (!data.startsWith("null")) {
                     this.addres.setZipCode(data);
                     this.isZipCodeAdded = true;
-                    data = null;
+                    data = "null";
                 } else {
                     return new Response("Введите зип-код адреса компании:", null);
                 }
@@ -209,30 +209,30 @@ public class CommandUpdate implements Command{
             }
 
             if (!this.isLocationXAdded) {
-                if (data != null) {
+                if (!data.startsWith("null")) {
                     if (resp != "") {
                         resp = "";
                     }
                     this.loc.setX(Integer.valueOf(data));
                     this.isLocationXAdded = true;
-                    data = null;
+                    data = "null";
                 } else {
                     return new Response(resp + "Введите координату x локации, на которой находится компания (просто название одним словом):", null);
                 }
             }
 
             if (!this.isLocationYAdded) {
-                if (data != null) {
+                if (!data.startsWith("null")) {
                     this.loc.setY(Float.parseFloat(data));
                     this.isLocationYAdded = true;
-                    data = null;
+                    data = "null";
                 } else {
                     return new Response(resp + "Введите координату y локации, на которой находится компания (просто название одним словом):", null);
                 }
             }
 
             if (!this.isLocationNameAdded) {
-                if (data != null) {
+                if (!data.startsWith("null")) {
                     this.loc.setName(data);
                     this.isLocationNameAdded = true;
                 } else {
